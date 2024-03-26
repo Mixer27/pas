@@ -57,38 +57,39 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 try:
     sock.bind((HOST, PORT))
 except socket.error as msg:
-    print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+    print ('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
     sys.exit()
 
-print "[%s] UDP ECHO Server is waiting for incoming connections ... " % strftime("%Y-%m-%d %H:%M:%S", gmtime())
+print ("[%s] UDP ECHO Server is waiting for incoming connections ... " % strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 
 try:
     while True:
 
         data, address = sock.recvfrom(1024)
-        print '[%s] Received %s bytes from client %s. Data: %s' % (
-        strftime("%Y-%m-%d %H:%M:%S", gmtime()), len(data), address, data)
+        data = data.decode()
+        print ('[%s] Received %s bytes from client %s. Data: %s' % (
+        strftime("%Y-%m-%d %H:%M:%S", gmtime()), len(data), address, data))
 
         if data:
 
             tmp = data.split(";")
-            print "DATA: %s" % data
+            print ("DATA: %s" % data)
 
             if tmp[0] == "zad15odpA":
                 answer = check_msgA_syntax(data)
-                sent = sock.sendto(answer, address)
-                print '[%s] Sent %s bytes bytes back to client %s.' % (
-                strftime("%Y-%m-%d %H:%M:%S", gmtime()), sent, address)
+                sent = sock.sendto(answer.encode(), address)
+                print ('[%s] Sent %s bytes bytes back to client %s.' % (
+                strftime("%Y-%m-%d %H:%M:%S", gmtime()), sent, address))
 
             elif tmp[0] == "zad15odpB":
                 answer = check_msgB_syntax(data)
-                sent = sock.sendto(answer, address)
-                print '[%s] Sent %s bytes bytes back to client %s.' % (
-                strftime("%Y-%m-%d %H:%M:%S", gmtime()), sent, address)
+                sent = sock.sendto(answer.encode(), address)
+                print ('[%s] Sent %s bytes bytes back to client %s.' % (
+                strftime("%Y-%m-%d %H:%M:%S", gmtime()), sent, address))
 
             else:
-                sent = sock.sendto("BAD_SYNTAX", address)
-                print '[%s] Sent %s bytes bytes back to client %s.' % (
-                strftime("%Y-%m-%d %H:%M:%S", gmtime()), sent, address)
+                sent = sock.sendto("BAD_SYNTAX".encode(), address)
+                print ('[%s] Sent %s bytes bytes back to client %s.' % (
+                strftime("%Y-%m-%d %H:%M:%S", gmtime()), sent, address))
 finally:
     sock.close()
